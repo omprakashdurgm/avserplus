@@ -1,0 +1,149 @@
+-- ============================================================
+-- AVSER+ RECRUITMENT PORTAL - COMPLETE DATABASE SCHEMA
+-- Government Recruitment Management System
+-- Complete schema with current and future scope
+-- Version: 1.0
+-- ============================================================
+
+-- This is the ACTUAL database schema being used
+-- Reference this file for all future development
+
+-- ============================================================
+-- CORE TABLES
+-- ============================================================
+
+-- Users Table Structure:
+-- - id (SERIAL PRIMARY KEY)
+-- - email (VARCHAR(255) UNIQUE NOT NULL)
+-- - password (VARCHAR(255) NOT NULL)
+-- - name (VARCHAR(255) NOT NULL)
+-- - mobile (VARCHAR(20))
+-- - date_of_birth (DATE)
+-- - category (VARCHAR(50)) - 'general', 'obc', 'sc', 'st', 'ews', 'pwd'
+-- - gender (VARCHAR(20)) - 'male', 'female', 'other'
+-- - is_verified (BOOLEAN DEFAULT FALSE)
+-- - email_verified (BOOLEAN DEFAULT FALSE)
+-- - mobile_verified (BOOLEAN DEFAULT FALSE)
+-- - profile_picture (VARCHAR(500))
+-- - created_at (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+-- - updated_at (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+-- - last_login (TIMESTAMP)
+
+-- Admins Table Structure:
+-- - id (SERIAL PRIMARY KEY)
+-- - email (VARCHAR(255) UNIQUE NOT NULL)
+-- - password (VARCHAR(255) NOT NULL)
+-- - name (VARCHAR(255) NOT NULL)
+-- - role (VARCHAR(50) DEFAULT 'admin')
+-- - department (VARCHAR(255))
+-- - permissions (JSONB)
+-- - is_active (BOOLEAN DEFAULT TRUE)
+-- - created_at (TIMESTAMP DEFAULT CURRENT_TIMESTAMP)
+-- - last_login (TIMESTAMP)
+
+-- ============================================================
+-- TOTAL TABLES: 16
+-- ============================================================
+-- 1. users
+-- 2. admins
+-- 3. vacancies (101 columns!)
+-- 4. applications (38 columns)
+-- 5. application_timeline
+-- 6. documents
+-- 7. payments
+-- 8. exam_schedules
+-- 9. exam_results
+-- 10. interview_schedules
+-- 11. shortlist_results
+-- 12. selection_results
+-- 13. objections
+-- 14. notifications
+-- 15. audit_log
+-- 16. system_settings
+
+-- ============================================================
+-- KEY DIFFERENCES FROM PREVIOUS SCHEMA
+-- ============================================================
+-- Users table uses:
+--   - 'id' (not 'user_id')
+--   - 'name' (not 'full_name' or 'first_name'/'last_name')
+--   - 'password' (not 'password_hash')
+--   - 'mobile' (not 'phone')
+--   - Additional fields: category, gender, date_of_birth
+--   - Verification fields: is_verified, email_verified, mobile_verified
+
+-- Admins table uses:
+--   - 'id' (not 'admin_id')
+--   - 'name' (not 'full_name')
+--   - 'password' (not 'password_hash')
+--   - JSONB permissions field
+--   - is_active flag
+
+-- ============================================================
+-- FOREIGN KEY RELATIONSHIPS (29 total)
+-- ============================================================
+-- applications → users(id)
+-- applications → vacancies(id)
+-- applications → admins(id) [verified_by]
+-- application_timeline → applications(id)
+-- application_timeline → admins(id) [actor_id]
+-- documents → applications(id)
+-- documents → admins(id) [verified_by]
+-- payments → applications(id)
+-- exam_schedules → vacancies(id)
+-- exam_schedules → admins(id) [created_by]
+-- exam_results → applications(id)
+-- exam_results → exam_schedules(id)
+-- interview_schedules → vacancies(id)
+-- interview_schedules → applications(id)
+-- interview_schedules → admins(id) [created_by]
+-- shortlist_results → vacancies(id)
+-- shortlist_results → applications(id)
+-- shortlist_results → admins(id) [created_by]
+-- selection_results → vacancies(id)
+-- selection_results → applications(id)
+-- selection_results → admins(id) [created_by]
+-- objections → applications(id)
+-- objections → vacancies(id)
+-- objections → users(id)
+-- objections → admins(id) [assigned_to]
+-- objections → admins(id) [resolved_by]
+-- notifications → users(id)
+-- system_settings → admins(id) [updated_by]
+-- vacancies → admins(id) [created_by]
+
+-- ============================================================
+-- INDEXES CREATED (Total: 80+)
+-- ============================================================
+-- See original schema for complete index list
+
+-- ============================================================
+-- SYSTEM SETTINGS (Default Values)
+-- ============================================================
+-- site_name: 'AVSER+ Recruitment Portal'
+-- site_tagline: 'Aspirant Verification, Screening, Evaluation & Recruitment'
+-- max_file_size_mb: '5'
+-- allowed_file_types: '["pdf","jpg","jpeg","png"]'
+-- pagination_limit: '50'
+-- enable_email_notifications: 'true'
+-- enable_sms_notifications: 'false'
+-- support_email: 'support@avserplus.gov.in'
+-- support_phone: '1800-XXX-XXXX'
+
+-- ============================================================
+-- NOTES FOR DEVELOPERS
+-- ============================================================
+-- 1. Always use 'id' for primary keys (not user_id, admin_id, etc.)
+-- 2. Password field is 'password' (not 'password_hash')
+-- 3. User's name is single field 'name' (not first_name/last_name)
+-- 4. Phone is 'mobile' (not 'phone')
+-- 5. Applications use JSONB for flexible data storage
+-- 6. Comprehensive audit logging available via audit_log table
+-- 7. All timestamps use CURRENT_TIMESTAMP default
+-- 8. Foreign keys use ON DELETE CASCADE where appropriate
+-- 9. Check constraints enforce data integrity
+-- 10. Indexes optimize query performance
+
+-- ============================================================
+-- END OF SCHEMA REFERENCE
+-- ============================================================
